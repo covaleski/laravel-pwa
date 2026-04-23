@@ -79,7 +79,11 @@
     },
     "extra": {
         "laravel": {
-            "dont-discover": []
+            "providers": [
+                "Covaleski\\LaravelPwa\\Providers\\BladeServiceProvider",
+                "Covaleski\\LaravelPwa\\Providers\\HelperServiceProvider",
+                "Covaleski\\LaravelPwa\\Providers\\PackageServiceProvider"
+            ]
         }
     },
     "config": {
