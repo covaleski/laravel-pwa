@@ -39,5 +39,15 @@ class BladeServiceProvider extends ServiceProvider
             $attributes = Arr::toHtmlAttributes(config('htmx.js'));
             return "<script {$attributes}></script>";
         });
+        Blade::directive('shell', function (string $expression) {
+            /** @var \Illuminate\View\Compilers\BladeCompiler $this */
+            $this->footer[] = '<?php echo $__env->stopFragment(); ?>';
+            return <<<PHP
+                <?php \$__env->startFragment('shell'); ?>
+                <?php echo strval({$expression}); ?>
+                <?php echo \$__env->stopFragment(); ?>
+                <?php \$__env->startFragment('page'); ?>
+                PHP;
+        }, true);
     }
 }
