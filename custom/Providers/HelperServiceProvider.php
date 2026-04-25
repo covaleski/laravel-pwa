@@ -5,7 +5,7 @@ namespace Covaleski\LaravelPwa\Providers;
 use Covaleski\LaravelPwa\View\Page;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades;
 use Illuminate\Support\ServiceProvider;
 
 class HelperServiceProvider extends ServiceProvider
@@ -30,8 +30,8 @@ class HelperServiceProvider extends ServiceProvider
                 ->values()
                 ->join(' ');
         });
-        Route::macro('pwa', function ($path, $name, $view) {
-            Route::any(
+        Facades\Route::macro('pwa', function ($path, $name, $view) {
+            Facades\Route::any(
                 uri: trim($path, '/') . '/{path?}',
                 action: function (
                     Request $request,
