@@ -53,7 +53,7 @@ class RenderedPage implements Responsable
      */
     public function toResponse($request)
     {
-        return $this->shouldSwapShell($request->header('HX-Shell-Name'))
+        return $this->shouldSwapShell($request->header('HX-Shell-Name', ''))
             ? $this->toShellSwapResponse($request)
             : $this->toPageSwapResponse($request);
     }
