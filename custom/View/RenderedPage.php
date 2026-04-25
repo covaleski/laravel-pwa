@@ -13,9 +13,9 @@ class RenderedPage implements Responsable
      */
     public function __construct(
         /**
-         * Rendered page name.
+         * View name.
          */
-        public string $page,
+        public string $view,
 
         /**
          * Rendered content.
@@ -39,7 +39,7 @@ class RenderedPage implements Responsable
             'HX-Retarget' => '.app__page',
             'HX-Trigger' => json_encode([
                 'pageswap' => [
-                    'page' => $this->page,
+                    'page' => $this->view,
                 ],
             ]),
         ]);
@@ -68,7 +68,7 @@ class RenderedPage implements Responsable
             'HX-Trigger' => json_encode([
                 'shellswap' => [
                     'shell' => $this->shell,
-                    'page' => $this->page,
+                    'page' => $this->view,
                 ],
             ]),
         ]);
@@ -80,17 +80,9 @@ class RenderedPage implements Responsable
     public function wrap(): string
     {
         return view(
-            view: $this->prefixShell($this->shell),
+            view: $this->shell,
             data: ['content' => $this->content],
         )->render();
-    }
-
-    /**
-     * Prefix a page name with the view name prefix.
-     */
-    protected function prefixShell(string $shell): string
-    {
-        return "shell.{$shell}";
     }
 
     /**

@@ -2,7 +2,7 @@
 
 namespace Covaleski\LaravelPwa\Providers;
 
-use Covaleski\LaravelPwa\View\Page;
+use Covaleski\LaravelPwa\Routing\PageRouter;
 use Illuminate\Http\Request;
 use Illuminate\Support;
 use Illuminate\Support\Facades;
@@ -36,18 +36,20 @@ class HelperServiceProvider extends ServiceProvider
             /** @var Request $this */
             return $this->hasHeader('HX-Request');
         });
-        Facades\Route::macro('pwa', function ($path, $name, $view) {
-            Facades\Route::any(
-                uri: trim($path, '/') . '/{path?}',
-                action: function (
-                    Request $request,
-                    ?string $path = null
-                ) use ($view) {
-                    return $request->htmx()
-                        ? Page::make($path)
-                        : view($view, ['path' => $path]);
-                },
-            )->where('path', '.*')->name($name);
+        Facades\Route::macro('pwa', function ($directory, $entrypoint, $route_prefix, $uri_prefix, $view_prefix) {
+            PageRouter::make(
+                directory: $directory,
+                entrypoint: $entrypoint,
+                route_prefix: $route_prefix,
+                uri_prefix: $uri_prefix,
+                view_prefix: $view_prefix,
+            )->route();
+        });
+        Facades\Storage::macro('root', function ($path = '') {
+            return Facades\Storage::build([
+                'driver' => 'local',
+                'root' => base_path($path),
+            ]);
         });
     }
 
@@ -62,6 +64,13 @@ class HelperServiceProvider extends ServiceProvider
                 ->map(fn ($value, $key) => sprintf('%s="%s"', $key, htmlspecialchars(strval($value))))
                 ->values()
                 ->join(' ');
+        });
+        Support\Stringable::macro('normalizePath', function () {
+            /** @var Illuminate\Support\Stringable $this */
+            return $this
+                ->replace('\\', '/')
+                ->replaceMatches('|(?<=.)/+|', '/')
+                ->whenTest('/^.:/', fn ($str) => $str->ucfirst());
         });
     }
 }

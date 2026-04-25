@@ -12,32 +12,21 @@ class Page implements Responsable
     /**
      * Create a page instance.
      */
-    public static function make(?string $path): static
+    public static function make(View $view): static
     {
-        return new static($path);
+        return new static($view);
     }
-
-    /**
-     * Page name.
-     */
-    protected string $name;
-
-    /**
-     * View.
-     */
-    protected View $view;
 
     /**
      * Create the page instance.
      */
     final public function __construct(
         /**
-         * View.
+         * View
          */
-        protected ?string $path,
-    ) {
-        $this->name = $this->makeName($path);
-        $this->view = $this->makeView($this->name);
+        protected View $view,
+    ){
+        //
     }
 
     /**
@@ -46,7 +35,7 @@ class Page implements Responsable
     public function render(): RenderedPage
     {
         return new RenderedPage(
-            page: $this->name,
+            view: $this->view->name(),
             content: $this->view->fragment('page'),
             shell: trim($this->view->fragment('shell')),
         );
@@ -61,41 +50,5 @@ class Page implements Responsable
     public function toResponse($request)
     {
         return $this->render()->toResponse($request);
-    }
-
-    /**
-     * Get the default page name.
-     */
-    protected function getDefaultPageName(): string
-    {
-        return 'home';
-    }
-
-    /**
-     * Get the page name for the specified page path.
-     */
-    protected function makeName(?string $path): string
-    {
-        return str($path ?? '')
-            ->trim('/')
-            ->replace('/', '.')
-            ->whenEmpty(fn () => str($this->getDefaultPageName()))
-            ->toString();
-    }
-
-    /**
-     * Create the view for the specified page path.
-     */
-    protected function makeView(string $page): View
-    {
-        return view($this->prefixPage($page));
-    }
-
-    /**
-     * Prefix a page name with the view name prefix.
-     */
-    protected function prefixPage(string $page): string
-    {
-        return "page.{$page}";
     }
 }
