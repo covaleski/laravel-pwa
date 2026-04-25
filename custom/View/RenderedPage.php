@@ -1,6 +1,6 @@
 <?php
 
-namespace Covaleski\LaravelPwa\Page;
+namespace Covaleski\LaravelPwa\View;
 
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\Request;

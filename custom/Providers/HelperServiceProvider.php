@@ -2,7 +2,7 @@
 
 namespace Covaleski\LaravelPwa\Providers;
 
-use Covaleski\LaravelPwa\Page\Page;
+use Covaleski\LaravelPwa\View\Page;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
