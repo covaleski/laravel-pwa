@@ -30,6 +30,10 @@ class HelperServiceProvider extends ServiceProvider
                 ->values()
                 ->join(' ');
         });
+        Facades\Request::macro('htmx', function () {
+            /** @var Request $this */
+            return $this->hasHeader('HX-Request');
+        });
         Facades\Route::macro('pwa', function ($path, $name, $view) {
             Facades\Route::any(
                 uri: trim($path, '/') . '/{path?}',
@@ -37,7 +41,7 @@ class HelperServiceProvider extends ServiceProvider
                     Request $request,
                     ?string $path = null
                 ) use ($view) {
-                    return $request->hasHeader('HX-Request')
+                    return $request->htmx()
                         ? Page::make($path)
                         : view($view, ['path' => $path]);
                 },
