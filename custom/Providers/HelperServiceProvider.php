@@ -4,7 +4,7 @@ namespace Covaleski\LaravelPwa\Providers;
 
 use Covaleski\LaravelPwa\View\Page;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
+use Illuminate\Support;
 use Illuminate\Support\Facades;
 use Illuminate\Support\ServiceProvider;
 
@@ -23,13 +23,15 @@ class HelperServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Arr::macro('toHtmlAttributes', function ($values) {
-            return collect($values)
-                ->whereNotNull()
-                ->map(fn ($value, $key) => sprintf('%s="%s"', $key, htmlspecialchars(strval($value))))
-                ->values()
-                ->join(' ');
-        });
+        $this->macroFacades();
+        $this->macroSupport();
+    }
+
+    /**
+     * Add macros to facades.
+     */
+    protected function macroFacades(): void
+    {
         Facades\Request::macro('htmx', function () {
             /** @var Request $this */
             return $this->hasHeader('HX-Request');
@@ -46,6 +48,20 @@ class HelperServiceProvider extends ServiceProvider
                         : view($view, ['path' => $path]);
                 },
             )->where('path', '.*')->name($name);
+        });
+    }
+
+    /**
+     * Add macros to helper classes.
+     */
+    protected function macroSupport(): void
+    {
+        Support\Arr::macro('toHtmlAttributes', function ($values) {
+            return collect($values)
+                ->whereNotNull()
+                ->map(fn ($value, $key) => sprintf('%s="%s"', $key, htmlspecialchars(strval($value))))
+                ->values()
+                ->join(' ');
         });
     }
 }
