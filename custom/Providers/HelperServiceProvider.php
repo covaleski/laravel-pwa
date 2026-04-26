@@ -61,7 +61,18 @@ class HelperServiceProvider extends ServiceProvider
         Support\Arr::macro('toHtmlAttributes', function ($values) {
             return collect($values)
                 ->whereNotNull()
-                ->map(fn ($value, $key) => sprintf('%s="%s"', $key, htmlspecialchars(strval($value))))
+                ->transform(function ($value, $key) {
+                    switch ($key) {
+                        case 'class':
+                            $value = Support\Arr::toCssClasses($value);
+                            break;
+                        case 'style':
+                            $value = Support\Arr::toCssStyles($value);
+                            break;
+                    }
+                    $value = htmlspecialchars(strval($value));
+                    return "{$key}=\"{$value}\"";
+                })
                 ->values()
                 ->join(' ');
         });
