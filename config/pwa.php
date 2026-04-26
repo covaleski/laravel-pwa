@@ -45,16 +45,6 @@ return [
 
         'overlay' => [
             'class' => 'app__overlay',
-            'style' => [
-                'background: green',
-                'position: fixed',
-                'top: 0',
-                'left: 0',
-                'width: 100vw',
-                'height: 100vh',
-                'z-index: 9999',
-                'transition: opacity 500ms, width 0ms 500ms, height 0ms 500ms',
-            ],
         ],
 
         'shell' => [
@@ -73,5 +63,31 @@ return [
         ],
 
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Critical Styles
+    |--------------------------------------------------------------------------
+    |
+    | This option defines critical CSS styles that can't be lazy loaded and
+    | will be directly embedded into the entrypoint view.
+    |
+    | You'll probably just want to use this option to customize the application
+    | overlay element.
+    |
+    */
+
+    'styles' => <<<CSS
+        .app__overlay {
+            background: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 9999;
+            transition: opacity 500ms, width 0ms 500ms, height 0ms 500ms;
+        }
+        CSS,
 
 ];
