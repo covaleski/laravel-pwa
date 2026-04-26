@@ -18,13 +18,13 @@
         @show
         @yield('head.end')
     </head>
-    <body @appContainer()>
+    <body @pwaContainer()>
         @yield('body.start')
-        <div @appShell()></div>
-        <div @appOverlay()></div>
+        <div @pwaShell()></div>
+        <div @pwaOverlay()></div>
         @yield('body.end')
         @section('scripts')
-            <script @appScript()></script>
+            <script @pwaScript()></script>
             @stack('scripts')
         @show
     </body>

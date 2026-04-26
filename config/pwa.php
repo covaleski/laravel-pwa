@@ -11,7 +11,7 @@ return [
     | compose the application entrypoint view.
     |
     | You can also override any attributes by passing an array of to the
-    | `@appContainer`, `@appShell`, `@appOverlay` and `@appScript` directives
+    | `@pwaContainer`, `@pwaShell`, `@pwaOverlay` and `@pwaScript` directives
     | when creating your custom entrypoint view.
     |
     */
