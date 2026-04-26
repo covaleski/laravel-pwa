@@ -36,8 +36,11 @@ class BladeServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Blade::directive('htmx', function (string $expression) {
-            $attributes = Arr::toHtmlAttributes(config('htmx.js'));
-            return "<script {$attributes}></script>";
+            return <<<PHP
+                <script <?php echo \\Illuminate\\Support\\Arr::toHtmlAttributes(
+                    config('htmx.js'),
+                ); ?>></script>
+                PHP;
         });
         Blade::directive('shell', function (string $expression) {
             /** @var \Illuminate\View\Compilers\BladeCompiler $this */
