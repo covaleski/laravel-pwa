@@ -10,6 +10,6 @@ Route::pwa(
     uri_prefix: '/app',
     entrypoint: 'entrypoint',
     directory: 'resources/views/pages',
-    route_prefix: 'page',
+    route_prefix: 'web',
     view_prefix: 'pages',
 );

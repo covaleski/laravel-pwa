@@ -1,4 +1,4 @@
-@shell('shells.user')
+@pwaPage('shells.user')
 
 <header>
     <h2>Post</h2>
