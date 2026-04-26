@@ -38,7 +38,7 @@ class BladeServiceProvider extends ServiceProvider
         Blade::directive('htmx', function (string $expression) {
             return <<<PHP
                 <script <?php echo \\Illuminate\\Support\\Arr::toHtmlAttributes(
-                    config('htmx.js'),
+                    config('pwa.script'),
                 ); ?>></script>
                 PHP;
         });
