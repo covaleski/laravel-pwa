@@ -52,10 +52,7 @@ class PageRouter
         foreach ($this->getRoutes() as $route) {
             Facades\Route::any(
                 $this->getUriFromRouteName($route),
-                $this->getAction(
-                    $route,
-                    $this->getViewNameFromRouteName($route),
-                ),
+                $this->getAction($this->getViewNameFromRouteName($route)),
             )->name($route);
         }
     }
@@ -63,12 +60,12 @@ class PageRouter
     /**
      * Get the route callback for the specified route and view names.
      */
-    protected function getAction(string $route, string $view): Closure
+    protected function getAction(string $view): Closure
     {
-        return function (Request $request) use ($route, $view) {
+        return function (Request $request) use ($view) {
             return $request->htmx()
                 ? Page::make(view($view, $request->route()->parameters()))
-                : view($this->entrypoint, ['route' => $route]);
+                : view($this->entrypoint, ['url' => $request->fullUrl()]);
         };
     }
 
