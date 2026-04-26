@@ -23,15 +23,24 @@ return [
                 console.log('Handling hx-on:pageswap...');
                 JS,
             'hx-on:shellswap' => <<<'JS'
-                let element, headers, json, style;
-                // Set X-Current-Shell header...
+                let element, headers, json, modifier, shell, style;
+                // Get new shell name...
+                shell = event.detail.shell || '';
+                // Get the shell element...
                 element = document.querySelector('.app__shell');
+                // Set the shell modifier...
+                modifier = `app__shell--${shell.replace(/\./g, '-')}`;
+                for (const className of element.classList.values()) {
+                    if (className.startsWith('app__shell--')) {
+                        element.classList.remove(className);
+                    }
+                }
+                element.classList.add(`app__shell--${modifier}`);
+                // Set X-Current-Shell header...
                 json = element?.getAttribute('hx-headers') || '{}';
-                console.log(json);
                 headers = JSON.parse(json);
-                headers['HX-Current-Shell'] = event.detail.shell || '';
+                headers['HX-Current-Shell'] = shell;
                 json = JSON.stringify(headers);
-                console.log(json);
                 element?.setAttribute('hx-headers', json);
                 // Hide overlay...
                 element = document.querySelector('.app__overlay');
