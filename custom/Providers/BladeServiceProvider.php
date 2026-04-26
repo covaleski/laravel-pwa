@@ -45,6 +45,15 @@ class BladeServiceProvider extends ServiceProvider
                 ); ?>
                 PHP;
         });
+        Blade::directive('pwaLink', function (string $expression) {
+            return <<<PHP
+                <?php echo \Illuminate\Support\Arr::toHtmlAttributes([
+                    'hx-get' => {$expression},
+                    'hx-push-url' => 'true',
+                    'hx-target' => '.app__page',
+                ]); ?>
+                PHP;
+        });
         Blade::directive('pwaOverlay', function (string $expression) {
             return <<<PHP
                 <?php echo \Illuminate\Support\Arr::toHtmlAttributes(
