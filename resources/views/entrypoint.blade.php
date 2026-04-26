@@ -5,8 +5,9 @@
         <meta charset="UTF-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
     </head>
-    <body>
-        <p>Hello, World!</p>
-        @htmx
+    <body @appContainer()>
+        <div @appShell()></div>
+        <div @appOverlay()></div>
+        <script @appScript()></script>
     </body>
 </html>

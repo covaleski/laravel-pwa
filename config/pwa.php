@@ -4,13 +4,15 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Default HTMX Headers
+    | Default Entrypoint View Element Attributes
     |--------------------------------------------------------------------------
     |
-    | This option sets the default HTMX header overrides used by the client to
-    | fetch page contents and send data to the server.
+    | This option defines the default attributes for the main elements that
+    | compose the application entrypoint view.
     |
-    | You can also override any attributes in the entrypoint view.
+    | You can also override any attributes by passing an array of to the
+    | `@appContainer`, `@appShell`, `@appOverlay` and `@appScript` directives
+    | when creating your custom entrypoint view.
     |
     */
 
@@ -62,23 +64,14 @@ return [
             'class' => 'app__shell',
         ],
 
-    ],
+        'script' => [
+            'crossorigin' => 'anonymous',
+            'hash' => 'sha384-H5SrcfygHmAuTDZphMHqBJLc3FhssKjG7w/CeCpFReSfwBWDTKpkzPP8c+cLsK+V',
+            'src' => 'https://cdn.jsdelivr.net/npm/htmx.org@2.0.10/dist/htmx.min.js',
+            'type' => 'text/javascript',
+            'defer' => 'true',
+        ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | HTMX Script Attributes
-    |--------------------------------------------------------------------------
-    |
-    | This option defines the attributes of the script tag used to include
-    | HTMX's features to the page.
-    |
-    */
-
-    'script' => [
-        'crossorigin' => 'anonymous',
-        'hash' => 'sha384-H5SrcfygHmAuTDZphMHqBJLc3FhssKjG7w/CeCpFReSfwBWDTKpkzPP8c+cLsK+V',
-        'src' => 'https://cdn.jsdelivr.net/npm/htmx.org@2.0.10/dist/htmx.min.js',
-        'type' => 'text/javascript',
     ],
 
 ];

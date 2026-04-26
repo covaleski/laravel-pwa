@@ -35,12 +35,11 @@ class BladeServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Blade::directive('htmx', function (string $expression) {
-            return <<<PHP
-                <script <?php echo \\Illuminate\\Support\\Arr::toHtmlAttributes(
-                    config('pwa.script'),
-                ); ?>></script>
-                PHP;
+        Blade::directive('appScript', function (string $expression) {
+            return $this->makeAttributeMergeDirective(
+                "config('pwa.attributes.script')",
+                $expression,
+            );
         });
         Blade::directive('shell', function (string $expression) {
             /** @var \Illuminate\View\Compilers\BladeCompiler $this */
