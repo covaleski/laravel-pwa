@@ -26,7 +26,7 @@ class PackageServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->mergeConfigFrom(
-            "{$this->path}/config/htmx.php",
+            "{$this->path}/config/pwa.php",
             'htmx',
         );
     }
@@ -37,7 +37,7 @@ class PackageServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->publishes([
-            "{$this->path}/config/htmx.php" => config_path('htmx.php'),
+            "{$this->path}/config/pwa.php" => config_path('pwa.php'),
         ]);
     }
 }
