@@ -41,7 +41,7 @@ class BladeServiceProvider extends ServiceProvider
                 $expression,
             );
         });
-        Blade::directive('shell', function (string $expression) {
+        Blade::directive('pwaPage', function (string $expression) {
             /** @var \Illuminate\View\Compilers\BladeCompiler $this */
             $this->footer[] = '<?php echo $__env->stopFragment(); ?>';
             return <<<PHP
