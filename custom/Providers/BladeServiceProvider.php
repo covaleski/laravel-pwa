@@ -35,9 +35,16 @@ class BladeServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Blade::directive('pwaScript', function (string $expression) {
+        Blade::directive('pwaContainer', function (string $expression) {
             return $this->makeAttributeMergeDirective(
-                "config('pwa.attributes.script')",
+                "['hx-headers' => json_encode(['X-Csrf-Token' => csrf_token()])]",
+                "config('pwa.attributes.container')",
+                $expression,
+            );
+        });
+        Blade::directive('pwaOverlay', function (string $expression) {
+            return $this->makeAttributeMergeDirective(
+                "config('pwa.attributes.overlay')",
                 $expression,
             );
         });
@@ -51,10 +58,9 @@ class BladeServiceProvider extends ServiceProvider
                 <?php \$__env->startFragment('page'); ?>
                 PHP;
         }, true);
-        Blade::directive('pwaContainer', function (string $expression) {
+        Blade::directive('pwaScript', function (string $expression) {
             return $this->makeAttributeMergeDirective(
-                "['hx-headers' => json_encode(['X-Csrf-Token' => csrf_token()])]",
-                "config('pwa.attributes.container')",
+                "config('pwa.attributes.script')",
                 $expression,
             );
         });
@@ -62,12 +68,6 @@ class BladeServiceProvider extends ServiceProvider
             return $this->makeAttributeMergeDirective(
                 "['hx-get' => \$url]",
                 "config('pwa.attributes.shell')",
-                $expression,
-            );
-        });
-        Blade::directive('pwaOverlay', function (string $expression) {
-            return $this->makeAttributeMergeDirective(
-                "config('pwa.attributes.overlay')",
                 $expression,
             );
         });
