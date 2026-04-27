@@ -43,11 +43,8 @@ return [
                 json = JSON.stringify(headers);
                 element?.setAttribute('hx-headers', json);
                 // Hide overlay...
-                element = document.querySelector('.app__overlay');
-                style = element?.style;
-                style?.setProperty('height', '0');
-                style?.setProperty('opacity', '0');
-                style?.setProperty('width', '0');
+                let overlay = document.querySelector('.app__overlay');
+                overlay?.classList?.add('app__overlay--hidden');
                 JS,
             'class' => 'app',
         ],
@@ -96,6 +93,12 @@ return [
             height: 100vh;
             z-index: 9999;
             transition: opacity 500ms, width 0ms 500ms, height 0ms 500ms;
+        }
+
+        .app__overlay.app__overlay--hidden {
+            opacity: 0;
+            width: 0;
+            height: 0;
         }
         CSS,
 
