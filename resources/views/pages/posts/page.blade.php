@@ -1,4 +1,4 @@
-@pwaDeclarePage('shells.user')
+@pwaDeclarePage(shell: 'shells.user')
 
 <header>
     <h2>Posts</h2>

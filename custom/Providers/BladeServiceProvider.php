@@ -68,8 +68,9 @@ class BladeServiceProvider extends ServiceProvider
             /** @var \Illuminate\View\Compilers\BladeCompiler $this */
             $this->footer[] = "<?php echo \$__env->stopFragment(); ?>";
             return <<<PHP
+                <?php \$pwaDeclarePage = literal({$expression}); ?>
                 <?php \$__env->startFragment('shell'); ?>
-                <?php echo strval({$expression}); ?>
+                <?php echo strval(\$pwaDeclarePage->shell); ?>
                 <?php echo \$__env->stopFragment(); ?>
                 <?php \$__env->startFragment('page'); ?>
                 PHP;

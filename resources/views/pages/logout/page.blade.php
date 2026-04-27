@@ -1,4 +1,4 @@
-@pwaDeclarePage('shells.blank')
+@pwaDeclarePage(shell: 'shells.blank')
 
 <header>
     <h2>Logout</h2>
