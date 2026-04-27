@@ -72,7 +72,7 @@ class BladeServiceProvider extends ServiceProvider
                 <?php \$__env->startFragment('shell'); ?>
                 <?php echo strval(\$pwaDeclarePage->shell); ?>
                 <?php echo \$__env->stopFragment(); ?>
-                <?php \$__env->startFragment('page'); ?>
+                <?php \$__env->startFragment('content'); ?>
                 PHP;
         }, true);
         Blade::directive('pwaScript', function (string $expression) {

@@ -36,7 +36,7 @@ class Page implements Responsable
     {
         return new RenderedPage(
             view: $this->view->name(),
-            content: $this->view->fragment('page'),
+            content: $this->view->fragment('content'),
             shell: trim($this->view->fragment('shell')),
         );
     }
