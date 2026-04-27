@@ -1,4 +1,4 @@
-@pwaDeclareShell()
+@pwaDeclareShell(modifier: 'blank')
 
 <main class="app__page">{!! $content !!}</main>
 <footer>

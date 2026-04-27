@@ -1,4 +1,4 @@
-@pwaDeclareShell()
+@pwaDeclareShell(modifier: 'user')
 
 <header>
     <nav>

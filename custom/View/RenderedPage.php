@@ -63,11 +63,12 @@ class RenderedPage implements Responsable
      */
     public function toShellSwapResponse(Request $request): Response
     {
-        $content = $this->wrap();
+        [$content, $modifier] = $this->wrap();
         return response($content, headers: [
             'HX-Retarget' => '.app__shell',
             'HX-Trigger' => json_encode([
                 'shellswap' => [
+                    'modifier' => $modifier,
                     'shell' => $this->shell,
                     'page' => $this->view,
                 ],
@@ -77,12 +78,14 @@ class RenderedPage implements Responsable
 
     /**
      * Get contents wrapped in the page's shell.
+     *
+     * @return array{string, string}
      */
-    public function wrap(): string
+    public function wrap(): array
     {
         /** @var Illuminate\View\View */
         $view = view($this->shell, ['content' => $this->content]);
-        return $view->fragment('content');
+        return [$view->fragment('content'), $view->fragment('modifier')];
     }
 
     /**

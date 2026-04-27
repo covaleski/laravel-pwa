@@ -50,6 +50,9 @@ class BladeServiceProvider extends ServiceProvider
             $this->footer[] = "<?php echo \$__env->stopFragment(); ?>";
             return <<<PHP
                 <?php \$pwaDeclareShell = literal({$expression}); ?>
+                <?php \$__env->startFragment('modifier'); ?>
+                <?php echo strval(\$pwaDeclareShell->modifier); ?>
+                <?php echo \$__env->stopFragment(); ?>
                 <?php \$__env->startFragment('content'); ?>
                 PHP;
         }, true);
