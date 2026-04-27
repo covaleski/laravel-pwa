@@ -1,3 +1,5 @@
+@pwaDeclareShell()
+
 <header>
     <nav>
         <a @pwaLink(route('web'))>

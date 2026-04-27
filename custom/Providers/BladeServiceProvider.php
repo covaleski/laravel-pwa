@@ -45,6 +45,14 @@ class BladeServiceProvider extends ServiceProvider
                 ); ?>
                 PHP;
         });
+        Blade::directive('pwaDeclareShell', function (string $expression) {
+            /** @var \Illuminate\View\Compilers\BladeCompiler $this */
+            $this->footer[] = "<?php echo \$__env->stopFragment(); ?>";
+            return <<<PHP
+                <?php \$pwaDeclareShell = literal({$expression}); ?>
+                <?php \$__env->startFragment('content'); ?>
+                PHP;
+        }, true);
         Blade::directive('pwaLink', function (string $expression) {
             return <<<PHP
                 <?php echo \Illuminate\Support\Arr::toHtmlAttributes([
