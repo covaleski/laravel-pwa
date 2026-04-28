@@ -36,7 +36,7 @@ class RenderedPage implements Responsable
     public function toPageSwapResponse(Request $request): Response
     {
         return response($this->content, 200, [
-            'HX-Retarget' => '.app__page',
+            'HX-Retarget' => $request->header('HX-Page-Target', '#page'),
             'HX-Trigger' => json_encode([
                 'pageswap' => [
                     'page' => $this->view,
@@ -65,7 +65,7 @@ class RenderedPage implements Responsable
     {
         [$content, $modifier] = $this->wrap();
         return response($content, headers: [
-            'HX-Retarget' => '.app__shell',
+            'HX-Retarget' => $request->header('HX-Shell-Target', '#shell'),
             'HX-Trigger' => json_encode([
                 'shellswap' => [
                     'modifier' => $modifier,

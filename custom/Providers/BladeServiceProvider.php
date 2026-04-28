@@ -61,7 +61,6 @@ class BladeServiceProvider extends ServiceProvider
                 <?php echo \Illuminate\Support\Arr::toHtmlAttributes([
                     'hx-get' => {$expression},
                     'hx-push-url' => 'true',
-                    'hx-target' => '.app__page',
                 ]); ?>
                 PHP;
         });

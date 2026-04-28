@@ -24,7 +24,7 @@ return [
                 JS,
             'hx-on:shellswap' => <<<'JS'
                 // Get the shell element...
-                let element = document.querySelector('.app__shell');
+                let element = document.getElementById('shell');
                 // Set modifier...
                 let classList = element?.classList;
                 if (classList) for (const className of classList?.values()) {
@@ -42,20 +42,22 @@ return [
                 json = JSON.stringify(headers);
                 element?.setAttribute('hx-headers', json);
                 // Hide overlay...
-                let overlay = document.querySelector('.app__overlay');
+                let overlay = document.getElementById('overlay');
                 overlay?.classList?.add('app__overlay--hidden');
                 JS,
             'class' => 'app',
         ],
 
         'overlay' => [
+            'id' => 'overlay',
             'class' => 'app__overlay',
         ],
 
         'shell' => [
-            'hx-headers' => '{"HX-Current-Shell": ""}',
+            'hx-headers' => '{"HX-Current-Shell": "", "HX-Shell-Target": "#shell", "HX-Page-Target": "#page"}',
             'hx-push-url' => 'true',
             'hx-trigger' => 'load from:window',
+            'id' => 'shell',
             'class' => 'app__shell',
         ],
 

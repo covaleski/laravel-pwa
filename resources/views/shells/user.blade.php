@@ -15,7 +15,7 @@
         </ul>
     </nav>
 </header>
-<main class="app__page">{!! $content !!}</main>
+<main id="page">{!! $content !!}</main>
 <footer>
     <p>This is the <strong>user</strong> shell from {{ date('H:i:s') }}.</p>
 </footer>
