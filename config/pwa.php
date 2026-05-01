@@ -60,7 +60,6 @@ return [
     */
 
     'router' => [
-        'entrypoint' => 'entrypoint',
         'route' => 'pwa',
         'uri' => '/app',
         'views' => 'pwa',

@@ -18,6 +18,11 @@ class PageRouter
     protected Filesystem $disk;
 
     /**
+     * Entrypoint view name.
+     */
+    protected string $entrypoint;
+
+    /**
      * Manifest URI.
      */
     protected string $manifest;
@@ -36,7 +41,6 @@ class PageRouter
      * Create the page router instance.
      */
     final public function __construct(
-        protected string $entrypoint,
         protected string $route,
         protected string $uri,
         protected string $views,
@@ -49,6 +53,9 @@ class PageRouter
      */
     public function route(): void
     {
+        if (!isset($this->entrypoint)) {
+            $this->entrypoint = $this->getEntrypoint();
+        }
         if (!isset($this->manifest)) {
             $this->manifest = $this->routeManifest();
         }
@@ -60,6 +67,15 @@ class PageRouter
         foreach ($this->disk->directories() as $directory) {
             $this->routeDirectory($directory, $shell, $options);
         }
+    }
+
+    /**
+     * Set the manifest URI.
+     */
+    public function withEntrypoint(string $view): static
+    {
+        $this->entrypoint = $view;
+        return $this;
     }
 
     /**
@@ -109,6 +125,14 @@ class PageRouter
                 return view($entrypoint, ['manifest' => route($manifest)]);
             }
         };
+    }
+
+    /**
+     * Get the entrypoint view name for the current directory.
+     */
+    protected function getEntrypoint(): string
+    {
+        return $this->joinPaths($this->views, 'entrypoint', '.');
     }
 
     /**
@@ -223,12 +247,12 @@ class PageRouter
     protected function routeDirectory(string $directory, string $shell, Directory $options): void
     {
         $router = new static(
-            entrypoint: $this->entrypoint,
             route: $this->joinPaths($this->route, $directory, '.'),
             uri: $this->joinPaths($this->uri, $directory, '/'),
             views: $this->joinPaths($this->views, $directory, '.'),
         );
         $router
+            ->withEntrypoint($this->entrypoint)
             ->withManifest($this->manifest)
             ->withParentOptions($options)
             ->withParentShell($shell)
