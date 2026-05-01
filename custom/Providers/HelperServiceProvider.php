@@ -41,7 +41,7 @@ class HelperServiceProvider extends ServiceProvider
             $router = new PageRouter(...$args);
             $router->route();
         });
-        Facades\Storage::macro('root', function ($path = '') {
+        Facades\Storage::macro('root', function (string $path = '') {
             return Facades\Storage::build([
                 'driver' => 'local',
                 'root' => base_path($path),

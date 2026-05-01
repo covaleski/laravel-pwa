@@ -30,6 +30,7 @@ return [
         ],
 
         'shell' => [
+            'hx-get' => '',
             'hx-headers' => '{"HX-Current-Shell": ""}',
             'hx-push-url' => 'true',
             'hx-swap' => 'outerHTML',

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="@yield('lang', config('app.locale'))">
+<html lang="@yield('lang', config('app.locale'))" hx-headers='{"X-Csrf-Token": {{ csrf_token() }}}'>
     <head>
         @yield('head.start')
         <title>@yield('title', config('app.name'))</title>
@@ -18,13 +18,13 @@
         @show
         @yield('head.end')
     </head>
-    <body @pwaContainer()>
+    <body {{ attributes(config('pwa.attributes.container')) }}>
         @yield('body.start')
-        <div @pwaShell()></div>
-        <div @pwaOverlay()></div>
+        <div {{ attributes(config('pwa.attributes.shell')) }}></div>
+        <div {{ attributes(config('pwa.attributes.overlay')) }}></div>
         @yield('body.end')
         @section('scripts')
-            <script @pwaScript()></script>
+            <script {{ attributes(config('pwa.attributes.script')) }}></script>
             @stack('scripts')
         @show
     </body>
