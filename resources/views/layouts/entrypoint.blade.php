@@ -16,7 +16,6 @@
             @stack('assets')
         @show
         @section('styles')
-            <style>{{ config('pwa.styles') }}</style>
             @stack('styles')
         @show
         @yield('head.end')
@@ -24,7 +23,6 @@
     <body {{ attributes(config('pwa.attributes.container')) }}>
         @yield('body.start')
         <div {{ attributes(config('pwa.attributes.shell')) }}></div>
-        <div {{ attributes(config('pwa.attributes.overlay')) }}></div>
         @yield('body.end')
         @section('scripts')
             <script {{ attributes(config('pwa.attributes.script')) }}></script>
