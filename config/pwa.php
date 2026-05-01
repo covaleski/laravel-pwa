@@ -66,7 +66,7 @@ return [
         ),
         'route' => 'pwa',
         'uri' => '/app',
-        'views' => 'pages',
+        'views' => 'pwa',
     ],
 
     /*
