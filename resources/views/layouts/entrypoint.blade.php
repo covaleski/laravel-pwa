@@ -8,9 +8,11 @@
             <meta name="viewport" content="@yield('viewport', 'width=device-width, initial-scale=1')"/>
             @stack('meta')
         @show
-        @section('preload')
-            {{-- Nothing default here yet --}}
-            @stack('preload')
+        @section('assets.preload')
+            @stack('assets.preload')
+        @show
+        @section('assets')
+            @stack('assets')
         @show
         @section('styles')
             <style>{{ config('pwa.styles') }}</style>
