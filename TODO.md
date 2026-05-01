@@ -3,7 +3,7 @@
 (B) Add instructions to README.md +Docs
 (A) Add manifest file +Pwa
 (A) Cache entrypoint page +Pwa
-(B) Add middleware to generated routes +Routing
+(B) Add middleware to generated routes +Routing {cm:2026-05-01}
 (A) Improve default entrypoint CSS +View
 (A) Push page paths to history +View {cm:2026-04-25}
 (A) Serve minimal content as entrypoint +View {cm:2026-04-25}

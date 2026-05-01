@@ -1,21 +1,19 @@
 # Laravel PWA Utilities
 
-Components, middleware and services for developing smooth PWA experiences with
-Laravel using HTMX.
+Routing utilities for easily developing smooth Progressive Web Applications with
+Laravel and HTMX.
 
 ## Installation
 
-Soon.
+Install this package using the Composer package manager:
 
-## Usage
-
-Soon.
+```sh
+composer require covaleski/laravel-pwa
+```
 
 ## Motivation
 
-HTMX is a lightweight JavaScript library that allow developers to use Ajax,
-transitions, sockets and server-sent events through HTML attributes. This 
-project is a proof of concept that aims to assemble HTMX, Blade templates and
-Laravel routing tools to provide a quick way of building a Progressive Web App
-that makes good use of app-shell architecture and client-side routing, without
-requiring the use of additional frameworks for front-end development.
+This package is a proof of concept that aims to assemble HTMX, Blade templates
+and Laravel built-in routing features to provide an easy way to create modern
+Progressive Web Applications without the need of any JavaScript frameworks or
+additional scripts.
