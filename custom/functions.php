@@ -8,6 +8,6 @@ if (!function_exists('attributes')) {
      */
     function attributes(array $attributes): ComponentAttributeBag
     {
-        return new ComponentAttributeBag($attributes);
+        return (new ComponentAttributeBag())->merge($attributes);
     }
 }
