@@ -61,9 +61,6 @@ return [
 
     'router' => [
         'entrypoint' => 'entrypoint',
-        'options' => new \Covaleski\LaravelPwa\Routing\Directory(
-            middleware: [],
-        ),
         'route' => 'pwa',
         'uri' => '/app',
         'views' => 'pwa',

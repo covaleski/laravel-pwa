@@ -18,27 +18,25 @@ class PageRouter
     protected Filesystem $disk;
 
     /**
-     * Directory options.
+     * Parent options.
      */
-    protected Directory $options;
+    protected Directory $parentOptions;
 
     /**
      * Parent shell view name.
      */
-    protected ?string $parentShell = null;
+    protected string $parentShell;
 
     /**
      * Create the page router instance.
      */
     final public function __construct(
         protected string $entrypoint,
-        ?Directory $options,
         protected string $route,
         protected string $uri,
         protected string $views,
     ) {
         $this->disk = $this->makeDisk();
-        $this->options = $options ?? new Directory();
     }
 
     /**
@@ -54,6 +52,15 @@ class PageRouter
         foreach ($this->disk->directories() as $directory) {
             $this->routeDirectory($directory, $shell, $options);
         }
+    }
+
+    /**
+     * Set the parent options.
+     */
+    public function withParentOptions(Directory $options): static
+    {
+        $this->parentOptions = $options;
+        return $this;
     }
 
     /**
@@ -135,8 +142,8 @@ class PageRouter
     protected function resolveOptions(): Directory
     {
         return $this->disk->exists('options.php')
-            ? $this->options->merge(require $this->disk->path('options.php'))
-            : $this->options->clone();
+            ? $this->parentOptions->merge(require $this->disk->path('options.php'))
+            : ($this->parentOptions?->clone() ?? new Directory());
     }
 
     /**
@@ -146,7 +153,7 @@ class PageRouter
     {
         if ($this->overridesShell()) {
             return $this->makeShellName();
-        } elseif ($this->parentShell !== null) {
+        } elseif (isset($this->parentShell)) {
             return $this->parentShell;
         } else {
             throw new RuntimeException('Missing parent shell view.');
@@ -160,11 +167,13 @@ class PageRouter
     {
         $router = new static(
             entrypoint: $this->entrypoint,
-            options: $options,
             route: $this->joinPaths($this->route, $directory, '.'),
             uri: $this->joinPaths($this->uri, $directory, '/'),
             views: $this->joinPaths($this->views, $directory, '.'),
         );
-        $router->withParentShell($shell)->route();
+        $router
+            ->withParentOptions($options)
+            ->withParentShell($shell)
+            ->route();
     }
 }
