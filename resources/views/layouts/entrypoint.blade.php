@@ -12,6 +12,7 @@
             @stack('assets.preload')
         @show
         @section('assets')
+            <link rel="manifest" type="application/manifest+json" href="{{ $manifest }}"/>
             @stack('assets')
         @show
         @section('styles')

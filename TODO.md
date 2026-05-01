@@ -5,7 +5,7 @@
 (B) Document inheritable shells in README.md +Docs
 (B) Document pages in README.md +Docs
 (B) Document routing in README.md +Docs
-(A) Add manifest file +Pwa
+(A) Add manifest file +Pwa {cm:2026-05-01}
 (A) Cache entrypoint page +Pwa
 (B) Add middleware to generated routes +Routing {cm:2026-05-01}
 (A) Improve default entrypoint CSS +View

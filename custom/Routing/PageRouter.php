@@ -18,6 +18,11 @@ class PageRouter
     protected Filesystem $disk;
 
     /**
+     * Manifest URI.
+     */
+    protected string $manifest;
+
+    /**
      * Parent options.
      */
     protected Directory $parentOptions;
@@ -44,6 +49,9 @@ class PageRouter
      */
     public function route(): void
     {
+        if (!isset($this->manifest)) {
+            $this->manifest = $this->routeManifest();
+        }
         $shell = $this->resolveShell();
         $options = $this->resolveOptions();
         Route::any($this->uri, $this->getCallback($shell))
@@ -52,6 +60,15 @@ class PageRouter
         foreach ($this->disk->directories() as $directory) {
             $this->routeDirectory($directory, $shell, $options);
         }
+    }
+
+    /**
+     * Set the manifest URI.
+     */
+    public function withManifest(string $manifest): static
+    {
+        $this->manifest = $manifest;
+        return $this;
     }
 
     /**
@@ -78,15 +95,36 @@ class PageRouter
     protected function getCallback(string $shell): Closure
     {
         $entrypoint = $this->entrypoint;
+        $manifest = $this->manifest;
         $view = $this->makeViewName();
-        return function (Request $request) use ($entrypoint, $shell, $view)
-        {
+        return function (Request $request) use (
+            $entrypoint,
+            $manifest,
+            $shell,
+            $view,
+        ) {
             if ($request->htmx()) {
                 return Page::make($view, $shell);
             } else {
-                return view($entrypoint, compact('shell', 'view'));
+                return view($entrypoint, ['manifest' => route($manifest)]);
             }
         };
+    }
+
+    /**
+     * Run the manifest script in the current directory and return its result.
+     */
+    protected function getManifest(): array
+    {
+        return require $this->disk->path('manifest.php');
+    }
+
+    /**
+     * Check whether a manifest script exists in the current directory.
+     */
+    protected function hasManifest(): bool
+    {
+        return $this->disk->exists('manifest.php');
     }
 
     /**
@@ -175,7 +213,7 @@ class PageRouter
         } elseif (isset($this->parentShell)) {
             return $this->parentShell;
         } else {
-            throw new RuntimeException('Missing parent shell view.');
+            throw new RuntimeException('Missing parent shell view');
         }
     }
 
@@ -191,8 +229,28 @@ class PageRouter
             views: $this->joinPaths($this->views, $directory, '.'),
         );
         $router
+            ->withManifest($this->manifest)
             ->withParentOptions($options)
             ->withParentShell($shell)
             ->route();
+    }
+
+    /**
+     * Add a route for the current directory manifest.
+     */
+    protected function routeManifest(): string
+    {
+        if (!$this->hasManifest()) {
+            throw new RuntimeException('Missing manifest script');
+        }
+        $data = $this->getManifest();
+        $route = $this->joinPaths($this->route, 'manifest', '.');
+        $uri = $this->joinPaths($this->uri, 'app.webmanifest', '/');
+        Route::get($uri, function () use ($data) {
+            return response()->json($data, 200, [
+                'Content-Type' => 'application/manifest+json',
+            ]);
+        })->name($route);
+        return $route;
     }
 }
