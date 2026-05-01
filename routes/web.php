@@ -6,10 +6,4 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::pwa(
-    uri_prefix: '/app',
-    entrypoint: 'entrypoint',
-    directory: 'resources/views/pages',
-    route_prefix: 'web',
-    view_prefix: 'pages',
-);
+Route::pwa();

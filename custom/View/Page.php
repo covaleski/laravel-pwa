@@ -4,7 +4,6 @@ namespace Covaleski\LaravelPwa\View;
 
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\Response;
 
 class Page implements Responsable
@@ -12,9 +11,9 @@ class Page implements Responsable
     /**
      * Create a page instance.
      */
-    public static function make(View $view): static
+    public static function make(string $view, string $shell): static
     {
-        return new static($view);
+        return new static($view, $shell);
     }
 
     /**
@@ -22,23 +21,16 @@ class Page implements Responsable
      */
     final public function __construct(
         /**
-         * View
+         * View name.
          */
-        protected View $view,
+        protected string $view,
+
+        /**
+         * Shell name.
+         */
+        protected string $shell,
     ){
         //
-    }
-
-    /**
-     * Get the page's expected shell name.
-     */
-    public function render(): RenderedPage
-    {
-        return new RenderedPage(
-            view: $this->view->name(),
-            content: $this->view->fragment('content'),
-            shell: trim($this->view->fragment('shell')),
-        );
     }
 
     /**
@@ -49,6 +41,38 @@ class Page implements Responsable
      */
     public function toResponse($request)
     {
-        return $this->render()->toResponse($request);
+        return $this->shouldSwapShell($request->header('HX-Current-Shell', ''))
+            ? $this->toShellSwapResponse($request)
+            : $this->toPageSwapResponse($request);
+    }
+
+    /**
+     * Get whether the specified shell should be swapped.
+     */
+    protected function shouldSwapShell(string $shell): bool
+    {
+        return trim($shell) !== trim($this->shell);
+    }
+
+    /**
+     * Get a response for the specified request that swaps the shell page.
+     */
+    protected function toPageSwapResponse(Request $request): Response
+    {
+        return response(view($this->view), 200, [
+            'HX-Retarget' => $request->header('HX-Page-Target', '#page'),
+            'HX-Reswap' => 'innerHTML',
+        ]);
+    }
+
+    /**
+     * Get a response for the specified request that swaps the app shell.
+     */
+    protected function toShellSwapResponse(Request $request): Response
+    {
+        return response(view($this->shell, ['page' => $this->view, 'shell' => $this->shell]), 200, [
+            'HX-Retarget' => $request->header('HX-Shell-Target', '#shell'),
+            'HX-Reswap' => 'outerHTML',
+        ]);
     }
 }

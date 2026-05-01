@@ -1,5 +1,3 @@
-@pwaDeclarePage(shell: 'shells.user')
-
 <header>
     <h2>Home Page</h2>
 </header>

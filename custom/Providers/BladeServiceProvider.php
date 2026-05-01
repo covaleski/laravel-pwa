@@ -45,17 +45,6 @@ class BladeServiceProvider extends ServiceProvider
                 ); ?>
                 PHP;
         });
-        Blade::directive('pwaDeclareShell', function (string $expression) {
-            /** @var \Illuminate\View\Compilers\BladeCompiler $this */
-            $this->footer[] = "<?php echo \$__env->stopFragment(); ?>";
-            return <<<PHP
-                <?php \$pwaDeclareShell = literal({$expression}); ?>
-                <?php \$__env->startFragment('modifier'); ?>
-                <?php echo strval(\$pwaDeclareShell->modifier); ?>
-                <?php echo \$__env->stopFragment(); ?>
-                <?php \$__env->startFragment('content'); ?>
-                PHP;
-        }, true);
         Blade::directive('pwaLink', function (string $expression) {
             return <<<PHP
                 <?php echo \Illuminate\Support\Arr::toHtmlAttributes([
@@ -74,17 +63,6 @@ class BladeServiceProvider extends ServiceProvider
                 ); ?>
                 PHP;
         });
-        Blade::directive('pwaDeclarePage', function (string $expression) {
-            /** @var \Illuminate\View\Compilers\BladeCompiler $this */
-            $this->footer[] = "<?php echo \$__env->stopFragment(); ?>";
-            return <<<PHP
-                <?php \$pwaDeclarePage = literal({$expression}); ?>
-                <?php \$__env->startFragment('shell'); ?>
-                <?php echo strval(\$pwaDeclarePage->shell); ?>
-                <?php echo \$__env->stopFragment(); ?>
-                <?php \$__env->startFragment('content'); ?>
-                PHP;
-        }, true);
         Blade::directive('pwaScript', function (string $expression) {
             return <<<PHP
                 <?php echo \Illuminate\Support\Arr::toHtmlAttributes(

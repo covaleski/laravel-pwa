@@ -36,14 +36,10 @@ class HelperServiceProvider extends ServiceProvider
             /** @var Request $this */
             return $this->hasHeader('HX-Request');
         });
-        Facades\Route::macro('pwa', function ($directory, $entrypoint, $route_prefix, $uri_prefix, $view_prefix) {
-            PageRouter::make(
-                directory: $directory,
-                entrypoint: $entrypoint,
-                route_prefix: $route_prefix,
-                uri_prefix: $uri_prefix,
-                view_prefix: $view_prefix,
-            )->route();
+        Facades\Route::macro('pwa', function (mixed ...$args) {
+            $args = array_replace(config('pwa.router', []), $args);
+            $router = new PageRouter(...$args);
+            $router->route();
         });
         Facades\Storage::macro('root', function ($path = '') {
             return Facades\Storage::build([

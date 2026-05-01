@@ -1,5 +1,3 @@
-@pwaDeclarePage(shell: 'shells.blank')
-
 <header>
     <h2>Login</h2>
 </header>

@@ -4,140 +4,167 @@ namespace Covaleski\LaravelPwa\Routing;
 
 use Closure;
 use Covaleski\LaravelPwa\View\Page;
+use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
+use RuntimeException;
 
 class PageRouter
 {
     /**
-     * Create a page router instance.
+     * Filesystem instance.
      */
-    public static function make(
-        string $uri_prefix,
-        string $entrypoint,
-        string $directory,
-        string $view_prefix,
-        string $route_prefix,
-    ): static {
-        return new static(
-            directory: $directory,
-            entrypoint: $entrypoint,
-            routePrefix: $route_prefix,
-            uriPrefix: $uri_prefix,
-            viewPrefix: $view_prefix,
-        );
-    }
+    protected Filesystem $disk;
+
+    /**
+     * Directory options.
+     */
+    protected Directory $options;
+
+    /**
+     * Parent shell view name.
+     */
+    protected ?string $parentShell = null;
 
     /**
      * Create the page router instance.
      */
     final public function __construct(
-        protected string $uriPrefix,
         protected string $entrypoint,
-        protected string $directory,
-        protected string $viewPrefix,
-        protected string $routePrefix,
+        ?Directory $options,
+        protected string $route,
+        protected string $uri,
+        protected string $views,
     ) {
-        $this->routePrefix = str($this->routePrefix)->trim('.')->toString();
-        $this->uriPrefix = str($this->uriPrefix)->trim('/')->toString();
-        $this->viewPrefix = str($this->viewPrefix)->trim('.')->toString();
+        $this->disk = $this->makeDisk();
+        $this->options = $options ?? new Directory();
     }
 
     /**
-     * Add the page routes.
+     * Find and route pages.
      */
     public function route(): void
     {
-        foreach ($this->getRoutes() as $route) {
-            Facades\Route::any(
-                $this->getUriFromRouteName($route),
-                $this->getAction($this->getViewNameFromRouteName($route)),
-            )->name($route);
+        $shell = $this->resolveShell();
+        $options = $this->resolveOptions();
+        Route::any($this->uri, $this->getCallback($shell))
+            ->middleware($options->middleware)
+            ->name($this->route);
+        foreach ($this->disk->directories() as $directory) {
+            $this->routeDirectory($directory, $shell, $options);
         }
     }
 
     /**
-     * Get the route callback for the specified route and view names.
+     * Set the parent shell view name.
      */
-    protected function getAction(string $view): Closure
+    public function withParentShell(string $view): static
     {
-        return function (Request $request) use ($view) {
-            return $request->htmx()
-                ? Page::make(view($view, $request->route()->parameters()))
-                : view($this->entrypoint, ['url' => $request->fullUrl()]);
+        $this->parentShell = $view;
+        return $this;
+    }
+
+    /**
+     * Get the callback for the current page.
+     */
+    protected function getCallback(string $shell): Closure
+    {
+        $entrypoint = $this->entrypoint;
+        $view = $this->makeViewName();
+        return function (Request $request) use ($entrypoint, $shell, $view)
+        {
+            if ($request->htmx()) {
+                return Page::make($view, $shell);
+            } else {
+                return view($entrypoint, compact('shell', 'view'));
+            }
         };
     }
 
     /**
-     * Get all relative file paths in the base directory.
+     * Join two dot-separated paths.
      */
-    protected function getFiles(): array
+    protected function joinPaths(string $a, string $b, string $glue): string
     {
-        return Storage::root($this->directory)->files(recursive: true);
+        $a = trim($a, "/. \n\r\t\v\0{$glue}");
+        $b = trim($b, "/. \n\r\t\v\0{$glue}");
+        return $a . $glue . $b;
     }
 
     /**
-     * Get the page view name for the specified relative file path.
+     * Create a filesystem instance for the current page directory.
      */
-    protected function getRouteNameFromFile(string $file): string
+    protected function makeDisk(): Filesystem
     {
-        return str($file)
-            ->normalizePath()
-            ->after(':')
-            ->start('/')
-            ->before('/page.blade.php')
-            ->ltrim('/')
-            ->replace('/', '.')
-            ->prepend($this->routePrefix, '.')
-            ->rtrim('.')
-            ->toString();
+        $view = view($this->makeViewName());
+        assert($view instanceof \Illuminate\View\View);
+        return Storage::build([
+            'driver' => 'local',
+            'root' => dirname($view->getPath()),
+        ]);
     }
 
     /**
-     * Get all views that are eligible to be routed as a page.
+     * Create the shell view name for the current views path.
      */
-    protected function getRoutes(): array
+    protected function makeShellName(): string
     {
-        return collect($this->getFiles())
-            ->filter($this->isPage(...))
-            ->map($this->getRouteNameFromFile(...))
-            ->toArray();
+        return "{$this->views}.shell";
     }
 
     /**
-     * Get the page URI for the specified route name.
+     * Create the page view name for the current views path.
      */
-    protected function getUriFromRouteName(string $route): string
+    protected function makeViewName(): string
     {
-        return str($route)
-            ->after($this->routePrefix)
-            ->swap(['.' => '/', '[' => '{', ']' => '}'])
-            ->ltrim('/')
-            ->prepend($this->uriPrefix, '/')
-            ->toString();
+        return "{$this->views}.page";
     }
 
     /**
-     * Get the page view name for the specified route name.
+     * Checks whether the current directory overrides the current shell.
      */
-    protected function getViewNameFromRouteName(string $route): string
+    protected function overridesShell(): bool
     {
-        return str($route)
-            ->after($this->routePrefix)
-            ->ltrim('.')
-            ->prepend($this->viewPrefix, '.')
-            ->rtrim('.')
-            ->append('.page')
-            ->ltrim('.')
-            ->toString();
+        return view()->exists($this->makeShellName());
     }
 
     /**
-     * Get whether a file is a page view.
+     * Get the final directory options for the current page.
      */
-    protected function isPage(string $file): bool
+    protected function resolveOptions(): Directory
     {
-        return str(basename($file))->exactly('page.blade.php');
+        return $this->disk->exists('options.php')
+            ? $this->options->merge(require $this->disk->path('options.php'))
+            : $this->options->clone();
+    }
+
+    /**
+     * Get the final shell name for the current page.
+     */
+    protected function resolveShell(): string
+    {
+        if ($this->overridesShell()) {
+            return $this->makeShellName();
+        } elseif ($this->parentShell !== null) {
+            return $this->parentShell;
+        } else {
+            throw new RuntimeException('Missing parent shell view.');
+        }
+    }
+
+    /**
+     * Add routes for the current directory recursively.
+     */
+    protected function routeDirectory(string $directory, string $shell, Directory $options): void
+    {
+        $router = new static(
+            entrypoint: $this->entrypoint,
+            options: $options,
+            route: $this->joinPaths($this->route, $directory, '.'),
+            uri: $this->joinPaths($this->uri, $directory, '/'),
+            views: $this->joinPaths($this->views, $directory, '.'),
+        );
+        $router->withParentShell($shell)->route();
     }
 }

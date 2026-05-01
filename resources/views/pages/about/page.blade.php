@@ -1,5 +1,3 @@
-@pwaDeclarePage(shell: 'shells.user')
-
 <header>
     <h2>About</h2>
 </header>

@@ -1,5 +1,3 @@
-@pwaDeclarePage(shell: 'shells.user')
-
 <header>
     <h2>New Post</h2>
 </header>

@@ -19,32 +19,8 @@ return [
     'attributes' => [
 
         'container' => [
-            'hx-on:pageswap' => <<<'JS'
-                console.log('Handling hx-on:pageswap...');
-                JS,
-            'hx-on:shellswap' => <<<'JS'
-                // Get the shell element...
-                let element = document.getElementById('shell');
-                // Set modifier...
-                let classList = element?.classList;
-                if (classList) for (const className of classList?.values()) {
-                    if (className.startsWith('app__shell--')) {
-                        classList?.remove(className);
-                    }
-                }
-                if (classList && event.detail.modifier) {
-                    classList?.add(`app__shell--${event.detail.modifier}`);
-                }
-                // Set X-Current-Shell header...
-                let json = element?.getAttribute('hx-headers') || '{}';
-                let headers = JSON.parse(json);
-                headers['HX-Current-Shell'] = event.detail.shell;
-                json = JSON.stringify(headers);
-                element?.setAttribute('hx-headers', json);
-                // Hide overlay...
-                let overlay = document.getElementById('overlay');
-                overlay?.classList?.add('app__overlay--hidden');
-                JS,
+            'hx-headers' => '{"HX-Shell-Target": "#shell", "HX-Page-Target": "#page"}',
+            'id' => 'app',
             'class' => 'app',
         ],
 
@@ -54,11 +30,12 @@ return [
         ],
 
         'shell' => [
-            'hx-headers' => '{"HX-Current-Shell": "", "HX-Shell-Target": "#shell", "HX-Page-Target": "#page"}',
+            'hx-headers' => '{"HX-Current-Shell": ""}',
             'hx-push-url' => 'true',
+            'hx-swap' => 'outerHTML',
             'hx-trigger' => 'load from:window',
             'id' => 'shell',
-            'class' => 'app__shell',
+            'class' => 'app__not-a-shell',
         ],
 
         'script' => [
@@ -69,6 +46,26 @@ return [
             'defer' => 'true',
         ],
 
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Default Page Router Parameters
+    |--------------------------------------------------------------------------
+    |
+    | This option defines the default parameters when creating a page router
+    | instance from the `Route::pwa(...)` method.
+    |
+    */
+
+    'router' => [
+        'entrypoint' => 'entrypoint',
+        'options' => new \Covaleski\LaravelPwa\Routing\Directory(
+            middleware: [],
+        ),
+        'route' => 'pwa',
+        'uri' => '/app',
+        'views' => 'pages',
     ],
 
     /*
@@ -96,7 +93,7 @@ return [
             transition: opacity 500ms, width 0ms 500ms, height 0ms 500ms;
         }
 
-        .app__overlay.app__overlay--hidden {
+        .app__shell + .app__overlay {
             opacity: 0;
             width: 0;
             height: 0;
