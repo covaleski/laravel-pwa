@@ -129,6 +129,14 @@ class PageRouter
     }
 
     /**
+     * Checks whether the current directory overrides the current options.
+     */
+    protected function overridesOptions(): bool
+    {
+        return $this->disk->exists('options.php');
+    }
+
+    /**
      * Checks whether the current directory overrides the current shell.
      */
     protected function overridesShell(): bool
@@ -137,13 +145,24 @@ class PageRouter
     }
 
     /**
+     * Load option overrides from the current directory.
+     */
+    protected function requireOptions(): Directory
+    {
+        return require $this->disk->path('options.php');
+    }
+
+    /**
      * Get the final directory options for the current page.
      */
     protected function resolveOptions(): Directory
     {
-        return $this->disk->exists('options.php')
-            ? $this->parentOptions->merge(require $this->disk->path('options.php'))
-            : ($this->parentOptions?->clone() ?? new Directory());
+        $options = isset($this->parentOptions)
+            ? $this->parentOptions->clone()
+            : new Directory();
+        return $this->overridesOptions()
+            ? $options->merge($this->requireOptions())
+            : $options;
     }
 
     /**
