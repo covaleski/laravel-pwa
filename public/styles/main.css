@@ -65,7 +65,28 @@
 }
 
 .navbar__heading {
+    cursor: pointer;
+    position: relative;
     margin-right: auto;
+}
+
+.navbar__heading::after {
+    content: "";
+    background-color: var(--text-color);
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 2px;
+    width: 0;
+    transition: width 0.2s;
+}
+
+.navbar__heading:hover::after {
+    width: 100%;
+}
+
+.navbar__heading > * {
+    margin: 0;
 }
 
 .navbar__list {
