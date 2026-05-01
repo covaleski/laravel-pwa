@@ -5,10 +5,10 @@
 (B) Document inheritable shells in README.md +Docs
 (B) Document pages in README.md +Docs
 (B) Document routing in README.md +Docs
+(C) Add Bootstrap to the example app +Example
 (A) Add manifest file +Pwa {cm:2026-05-01}
 (A) Cache entrypoint page +Pwa
 (B) Add middleware to generated routes +Routing {cm:2026-05-01}
-(A) Improve default entrypoint CSS +View
 (A) Push page paths to history +View {cm:2026-04-25}
 (A) Serve minimal content as entrypoint +View {cm:2026-04-25}
 (A) Swap page on navigation +View {cm:2026-04-25}
