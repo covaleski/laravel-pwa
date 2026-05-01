@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="@yield('lang', config('app.locale'))" hx-headers='{"X-Csrf-Token": {{ csrf_token() }}}'>
+<html lang="@yield('lang', config('app.locale'))" hx-headers='{"X-Csrf-Token": "{{ csrf_token() }}"}'>
     <head>
         @yield('head.start')
         <title>@yield('title', config('app.name'))</title>
